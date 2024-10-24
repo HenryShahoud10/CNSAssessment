@@ -1,19 +1,27 @@
+import os
 from flask import Flask, request, redirect, render_template
-import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# SQLite DB setup
-if __name__ == '__main__':
-    init_db()  # Initialize the database when the app starts
-    app.run(debug=True)
+# Setup PostgreSQL database using your credentials
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    'postgres://ud5q391b26i1g7:paf97f238d4826832beda56832595b507f4be3b6be6efc687ad01fbad14c8fab1@'
+    'c3gtj1dt5vh48j.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d5eikquvd8rjo7'
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-def init_db():
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)''')
-    conn.commit()
-    conn.close()
+# User model
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+
+# Create the database and tables
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 # Registration page route
 @app.route('/')
@@ -26,11 +34,9 @@ def register():
     name = request.form['name']
     email = request.form['email']
     # Save the registered user's info into the database
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)", (name, email))
-    conn.commit()
-    conn.close()
+    new_user = User(name=name, email=email)
+    db.session.add(new_user)
+    db.session.commit()
     # Redirect to the game page, passing the user's name
     return redirect(f'/game?name={name}')
 
@@ -39,8 +45,7 @@ def register():
 def game():
     # Get the user's name from the URL parameters
     player_name = request.args.get('name', 'Player')
-    return render_template('game.html', player_name=player_name)  # Pass the player's name to the game template
+    return render_template('game.html', player_name=player_name)
 
 if __name__ == '__main__':
-    init_db()  # Initialize the database when the app starts
     app.run(debug=True)
