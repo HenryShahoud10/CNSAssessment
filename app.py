@@ -4,6 +4,10 @@ import sqlite3
 app = Flask(__name__)
 
 # SQLite DB setup
+if __name__ == '__main__':
+    init_db()  # Initialize the database when the app starts
+    app.run(debug=True)
+
 def init_db():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
