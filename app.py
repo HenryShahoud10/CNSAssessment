@@ -14,7 +14,7 @@ def init_db():
 # Registration page route
 @app.route('/')
 def registration_page():
-    return render_template('registration.html')
+    return render_template('register.html')
 
 # Handle registration form submission
 @app.route('/register', methods=['POST'])
