@@ -11,5 +11,4 @@ packaging==24.1
 SQLAlchemy==2.0.36
 typing_extensions==4.12.2
 Werkzeug==3.0.4
-Flask-SQLAlchemy==2.5.1
 psycopg2-binary==2.9.3
