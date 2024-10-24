@@ -1,0 +1,8 @@
+name: ansible-6.3.0
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - ansible=6.3.0=py310hff52083_0
+  - ansible-core=2.13.3=pyhd8ed1ab_0
+prefix: /home/zeestrat/miniconda3/envs/ansible-6.3.0                                     
